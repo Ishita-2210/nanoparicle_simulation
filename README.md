@@ -1,90 +1,31 @@
-🌊 Microplastics Simulation & Visualization
+# Microplastics map and particle visualization
 
-This project simulates the spread of microplastics in water bodies and visualizes the results on an interactive map using Folium
-.
-It combines simulation logic (Python) with geospatial visualization to better understand pollution flow and accumulation.
+This fork of [vasu-era/nanoparicle_simulation](https://github.com/vasu-era/nanoparicle_simulation) preserves the upstream Flask/Folium map, CSV datasets and a desktop particle visualization. Upstream authorship remains with its contributors; this fork's setup corrections do not make the simulation original work by the fork owner. No new license is assigned.
 
-📂 Project Structure
-NANO/
- ├── app.py                        # Flask app to serve the map
- ├── depth_modified.py             # Simulation code (depth-based model)
- ├── integration_app.py            # Data integration / processing script
- ├── geocoded_500_successful.csv   # Dataset with geocoded points
- ├── Microplastics_Clean_Essential.csv  # Core dataset
- ├── requirements.txt              # Python dependencies
- ├── Procfile                      # Deployment config (for Render)
- ├── templates/
- │    └── microplastics_map.html   # Folium map (generated visualization)
- └── simulation_out.log            # Simulation logs
+## View the saved map
 
-🚀 How to Run Locally
+With Python 3.11+ in an activated virtual environment:
 
-Clone the repo
-
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
-
-
-Create virtual environment (recommended)
-
-python -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
-
-
-Install dependencies
-
-pip install -r requirements.txt
-
-
-Run Flask app
-
+```sh
+python -m pip install -r requirements.txt
 python app.py
+```
 
+Open http://127.0.0.1:5000/. Flask serves `templates/microplastics_map.html`, a pre-generated Folium visualization. Map tiles and JavaScript dependencies require internet access. The web route does not run the desktop simulation. On a Linux host the existing `Procfile` starts `gunicorn app:app`; no deployed URL is asserted here.
 
-Open in browser
-Navigate to http://127.0.0.1:5000/ to view the interactive map.
+## Optional desktop path
 
-🌐 Deployment (Render)
+```sh
+python -m pip install -r requirements-desktop.txt
+python "integration_app .py"
+```
 
-Push this repo to GitHub.
+The filename really contains a space before `.py`. This entry point reads the included CSVs, generates a separate root-level HTML map, opens a PyWebview window and launches `depth_modified.py` on map clicks. It requires a supported desktop webview runtime and graphical display. Run from the repository root. `depth_modified.py` can also run directly with optional latitude/longitude arguments.
 
-Go to Render
- → New Web Service.
+`Microplastics_Clean_Essential.csv` contains sample locations, measurements, depth and color labels; `geocoded_500_successful.csv` provides industrial locations. Their original provenance, reuse terms and calibration are not established by this fork. Keep upstream data and attribution intact.
 
-Connect your GitHub repo.
+## Verify and interpret
 
-Configure:
+Install `pytest`, then run `python -m pytest -q`. The test verifies that Flask serves the existing Leaflet map. Desktop rendering and external map tiles are separate checks. The stylized currents and toxicity colors are illustrative heuristics, not a validated environmental transport or exposure model. Historical logs and generated map assets remain preserved.
 
-Build command:
-
-pip install -r requirements.txt
-
-
-Start command:
-
-gunicorn app:app
-
-
-Choose Free Plan and deploy.
-
-Your app will be live at:
-
-https://your-app-name.onrender.com
-
-📊 Features
-
-Simulates microplastic flow and accumulation.
-
-Uses Folium maps for interactive visualization.
-
-Works with real datasets (.csv).
-
-Can be deployed to the web for public access.
-
-🔮 Future Improvements
-
-Add real-time simulation updates instead of static maps.
-
-Integrate with machine learning models to predict plastic movement.
-
-Expand dataset coverage for more accuracy.
+Standard-library modules such as `sys`, `math`, `pathlib` and `subprocess` are supplied by Python; they are no longer listed as packages to install. Desktop dependencies are optional so the web server can install without them.
